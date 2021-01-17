@@ -1,0 +1,11 @@
+- hosts: localhost
+  connection: localhost
+  
+  vars:
+    homebrew_installed_packages:
+      - pv 
+    
+    roles:
+      - elliotweiser.osx-command-line-tools
+      - role: geerlingguy.homebrew
+        become: true

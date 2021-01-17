@@ -1,0 +1,76 @@
+---
+- name: Install Apache.
+  hosts: all
+  become: true
+
+  handlers:
+    - name: restart apache
+      service: 
+        name: "{{ apache_service }}"
+        state: restarted
+
+  pre_tasks:
+    - name: Load variable files.
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "vars/apache_{{ansible_os_family }}.yml"
+        - vars/apache_default.yml
+        
+
+
+  tasks: 
+    - name: Install Apache.
+      package:
+        name: "{{ apache_package }}"
+        state: present
+      
+
+    - name: Copy configuration files.
+      copy: 
+        src: files/test.conf
+        dest: "{{ apache_config_dir }}/test.conf"
+      notify: 
+        - restart apache
+
+
+    - name: Make sure Apache is started now and at boot.
+      service: 
+        name: "{{ apache_service }}"
+        state: started
+        enabled: true
+
+
+    # - name: Download a file.
+    #   get_url:
+    #     url: http://ipv4.download.thinkbroadband.com/20MB.zip
+    #     dest: /tmp
+      # environment:
+      #   http_proxy: http://example-proxy:80/
+      #   https_proxy: https://example-proxy:80/
+
+      # environment: proxy_vars
+    # - name: Add an environment variable to he remote user's shell.
+    #   lineinfile:
+    #       dest: "~/.bash_profile"
+    #       regexp: '^ENV_VAR='
+    #       line: 'ENV_VAR=value'
+    #   become: false
+
+    # - name: Get the value of an environment variable.
+    #   shell: 'source ~/.bash_profile && echo $ENV_VAR'
+    #   register: foo
+
+    # - debug: msg="The variable is {{ foo.stdout }}"
+
+      # vars_files: 
+  #   - vars/apache_default.yml
+  #   - vars/apache_{{ansible_os_family }}.yml
+
+    # vars: 
+  #   proxy_vars:
+  #     http_proxy: http://example-proxy:80/
+  #     https_proxy: https://example-proxy:80/
+
+  # environment:
+    #   http_proxy: http://example-proxy:80/
+    #   https_proxy: https://example-proxy:80/

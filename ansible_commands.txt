@@ -1,0 +1,30 @@
+ansible -i inventory example -m ping -u root
+ansible multi -i inventory -a "hostname"
+ansible multi -i inventory -a "hostname" -f 1
+ansible -i inventory db -b -m mysql_user -a "name=django host=% password=12345 priv=*.*:ALL state=present"
+ansible -i inventory app -a "free -m" --limit "192.168.60.4"
+ansible -i inventory app -a "free -m" --limit "*.4"
+
+ansible -i inventory multi -b -B 3600 -P 0 -a "yum -y update"
+ansible -i inventory multi -b -m async_status -a "jid=560656116218.2399"
+
+
+ansible multi -i inventory -b -a "tail /var/log/messages"
+ansible -i inventory multi -b -m shell -a "tail /var/log/messages | grep   ansible-command | wc -l"
+
+ansible-playook -i inventory multi --limit="!:db"
+ansible-inventory --list -i inventory
+
+
+ansible-playbook main.yml --syntax-check
+ansible-playbook -i inventory main.yml --syntax-check
+
+ansible-playbook -i inventory --limit centos apache.yml --froce-handlers
+
+
+ansible -i inventory centos -m setup
+
+ansible-playbook main.yml --vault-password-file=./pass.txt
+ansible-vault encrypt vars/api_key.yml
+ansible-vault rekey vars/api_key.yml
+ansible-vault decrypt vars/api_key.yml

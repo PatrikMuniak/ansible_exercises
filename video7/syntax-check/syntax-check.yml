@@ -1,0 +1,14 @@
+- hosts: localhost
+  gather_facts: false
+  connection: local
+
+  tasks:
+  # Syntax check will pass whether or not this file exists.
+    - include_tasks: dates.yml
+  
+  # This will cause a failure, since it can be chcked statically.
+    # - import_tasks: free.yml
+
+    - name: Print a deug message.
+      debug:
+        msg: "Hello there."
